@@ -1,0 +1,92 @@
+﻿<div clas="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header text-end">
+                <button type="button" class="btn btn-primary" name="add-subject-btn">Add Subject</button>
+                <button type="button" class="btn btn-primary" name="remove-subject-btn">Remove</button>
+            </div>
+            <div class="card-body p-0" style="height:34 0px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Subject Code</th>
+                            <th style="min-width: 200px;">Subject Name</th>
+                            <th style="min-width: 400px;">Subject Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-subjects-tbody-id"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $('button[name="add-subject-btn"]').click(function () {
+        addSubjectRow();
+    });
+
+    $('button[name="remove-subject-btn"]').click(function () {
+        $('tr.selected[name="student-subject-table-row"]').remove();
+    });
+
+    $('#student-subjects-tbody-id').on('click', 'tr[name="student-subject-table-row"]', function () {
+        $('tr[name="student-subject-table-row"]').removeClass('list-group-item-secondary list-group-item-primary selected');
+        $(this).addClass('list-group-item-primary selected');
+    });
+
+    $(document).on('change', 'input[name="SubjectName"]', function () {
+
+        var val = $(this).val();
+        var datalistId = $(this).attr('list');
+        datalistId = "#" + datalistId;
+
+        var subjectId = getDataFromDatalist(val, datalistId, 'data-id');
+        var subjectCode = getDataFromDatalist(val, datalistId, 'data-code');
+        var subjectDesc = getDataFromDatalist(val, datalistId, 'data-description');
+
+        var tr = $(this).parent().parent();
+
+        //console.log(subjectId)
+        $(tr).find('input[name="SubjectId"]').val(subjectId);
+        $(tr).find('input[name="SubjectCode"]').val(subjectCode);
+        $(tr).find('td[name="SubjectDescription"]').text(subjectDesc);
+
+        //console.log(subjectId)
+
+    });
+
+    function addSubjectRow() {
+        var row = '';
+        row += '<tr name="student-subject-table-row">';
+        row += '<td><input type="hidden" name="SubjectId" /><input type="text" class="form-control" name="SubjectCode" readonly /></td>';
+        row += '<td><input class="form-control" list="subject-datalist" name="SubjectName" autocomplete="off" />';
+        row += '<datalist id="subject-datalist"></datalist></td>';
+        row += '<td name="SubjectDescription"></td>';
+        row += '</tr>';
+
+        $('#student-subjects-tbody-id').prepend(row);
+        loadSubjectsDatalist('#subject-datalist');
+    }
+
+    function loadSubjectsDatalist(datalistId) {
+        $.ajax({
+            cache: false,
+            type: "get",
+            dataType: "JSON",
+            url: '@Url.Action("GetSubjectList", "Subjects")',
+            success: function (response) {
+
+                var row = '';
+
+                response.map((res) => {
+                    row += `<option value="${res.subjectName}" data-id="${res.subjectId}" data-description="${res.subjectDescription}" data-code="${res.subjectCode}" >`
+                })
+
+                $(datalistId).html(row);
+            }
+        });
+    }
+
+</script>

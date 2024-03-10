@@ -1,0 +1,76 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<h1>Students List</h1>
+<div class="card">
+    <div class="card-header text-end">
+        <button class="btn btn-primary" name="new-student-form">New</button>
+        <button class="btn btn-primary" name="view-student-form">View</button>
+    </div>
+    <div class="card-body p-0" >
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="min-width:200px;">Student ID</th>
+                    <th style="min-width:500px;">Student Name</th>
+                    <th style="min-width:150px;">Year Level</th>
+                </tr>
+            </thead>
+            <tbody id="student-list-tbody-id"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        getStudentList();
+
+        $('button[name="new-student-form"]').click(() => {
+            var urlObj = { "formDirectory": "_StudentForm" };
+            CallForm(urlObj);
+        });
+
+    });
+
+    const getStudentList = () => {
+        $.ajax({
+            cache: false,
+            type: "get",
+            dataType: "JSON",
+            url: '@Url.Action("GetStudentsList", "Students")',
+            success: function (res) {
+                console.log(res);
+                showStudentList(res);
+            }
+        });
+    }
+
+    const CallForm = (data) => {
+
+        $.get('@Url.Action("CallForm", "Students")', data, function (data, status) {
+            $('#modal-xl').find('.modal-content').html(data);
+            $('#modal-xl').modal('show');
+        })
+    }
+
+    const showStudentList = (items) => {
+
+        var row = '';
+        items.map((item) => {
+
+            var fullName = item.lastName + ", " + item.firstName + " " + item.middleName;
+            row += '<tr>';
+            row += `<td>${item.studentID}</td>`;
+            row += `<td>${fullName}</td>`;
+            row += `<td>${item.yearLevel}</td>`;
+            row += '</tr>';
+
+        });
+
+        $('#student-list-tbody-id').html(row);
+    }
+
+</script>

@@ -1,0 +1,63 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<h1>Subjects</h1>
+<div class="card">
+    <div class="card-header text-end">
+        <button class="btn btn-primary" name="load-new-subject-form">Add Subject</button>
+    </div>
+    <div class="card-body p-0" style="height: 70vh;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Subject ID</th>
+                    <th style="min-width: 500px;">Subject Name</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="subjects-modal-default" ta-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="subjects-modal-lg" ta-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="subjects-modal-default" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="subjects-modal- xl" ta-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="subjects-modal-default" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $('button[name="load-new-subject-form"]').click(() => {
+        var urlObj = { "formDirectory": "_SubjectForm" };
+        CallForm(urlObj)
+    });
+
+    const CallForm = (data) => {
+
+        $.get('@Url.Action("CallForm", "Subjects")', data, function (data, status) {
+            $('#subjects-modal-default').find('.modal-content').html(data);
+            $('#subjects-modal-default').modal('show');
+        })
+    }
+
+</script>
+<script src="~/js/subjects.js"></script>
